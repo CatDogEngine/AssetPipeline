@@ -5,19 +5,6 @@
 namespace cdtools
 {
 
-// Define explicit vector types to create vector instances.
-// So that we can specialize behaviors for different vector types.
-// For example, Point is (0, 0, 0, 1) and Direction is (0, 0, 0, 0) by default.
-enum class VectorType : uint8_t
-{
-	Generic = 0,
-	Point,
-	Direction,
-	Color,
-	U8Color,
-	UV,
-};
-
 /// <summary>
 /// CRTP derived class to write common methods about VectorType.
 /// </summary>
@@ -127,20 +114,5 @@ private:
 	static_assert(N > 1);
 	T data[N];
 };
-
-// Generic vector types.
-using Vec2f = VectorDerived<float, 2, VectorType::Generic>;
-using Vec3f = VectorDerived<float, 3, VectorType::Generic>;
-using Vec4f = VectorDerived<float, 4, VectorType::Generic>;
-using Vec2 = VectorDerived<double, 2, VectorType::Generic>;
-using Vec3 = VectorDerived<double, 3, VectorType::Generic>;
-using Vec4 = VectorDerived<double, 4, VectorType::Generic>;
-
-// More safe specific vector types than using generic types.
-using Point = VectorDerived<float, 3, VectorType::Point>;;
-using Direction = VectorDerived<float, 3, VectorType::Direction>;
-using Color = VectorDerived<float, 4, VectorType::Color>;
-using U8Color = VectorDerived<uint8_t, 4, VectorType::U8Color>;
-using UV = VectorDerived<float, 2, VectorType::UV>;
 
 }

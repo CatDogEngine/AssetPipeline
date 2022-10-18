@@ -109,14 +109,16 @@ bool FbxProducer::TraverseMeshNode(fbxsdk::FbxNode* pMeshNode, SceneDatabase* pS
 	fbxsdk::FbxMesh* pFbxMesh = reinterpret_cast<fbxsdk::FbxMesh*>(pMeshNode->GetNodeAttribute());
 	assert(pFbxMesh && "Invalid node attribute for mesh node");
 
-	cdtools::Mesh mesh(MeshID(m_nodeIDCounter++), pMeshNode->GetName(), pFbxMesh->GetPolygonVertexCount(), pFbxMesh->GetPolygonCount());
-	mesh.SetVertexColorSetCount(pFbxMesh->GetElementVertexColorCount());
-	mesh.SetVertexUVSetCount(pFbxMesh->GetElementUVCount());
-
+	// TODO : parse transform to build relationships between nodes
 	fbxsdk::FbxAMatrix localTransform = pMeshNode->EvaluateLocalTransform();
 	localTransform.GetT();
 	localTransform.GetR();
 	localTransform.GetS();
+
+	// Static mesh data
+	cdtools::Mesh mesh(MeshID(m_nodeIDCounter++), pMeshNode->GetName(), pFbxMesh->GetPolygonVertexCount(), pFbxMesh->GetPolygonCount());
+	mesh.SetVertexColorSetCount(pFbxMesh->GetElementVertexColorCount());
+	mesh.SetVertexUVSetCount(pFbxMesh->GetElementUVCount());
 
 	fbxsdk::FbxVector4* pVertexPositions = pFbxMesh->GetControlPoints();
 	for (uint32_t polygonIndex = 0, vertexID = 0; polygonIndex < mesh.GetPolygonCount(); ++polygonIndex)
@@ -246,6 +248,67 @@ bool FbxProducer::TraverseMeshNode(fbxsdk::FbxNode* pMeshNode, SceneDatabase* pS
 			}
 
 			++vertexID;
+		}
+	}
+
+	// Experiment : Skin mesh data
+	int skinDeformerCount = pFbxMesh->GetDeformerCount(FbxDeformer::eSkin);
+	for (int skinDeformerIndex = 0; skinDeformerIndex < skinDeformerCount; ++skinDeformerIndex)
+	{
+		fbxsdk::FbxSkin* pSkinDeformer = static_cast<FbxSkin*>(pFbxMesh->GetDeformer(skinDeformerIndex, FbxDeformer::eSkin));
+		if(!pSkinDeformer)
+		{
+			continue;
+		}
+
+		int skinClusterCount = pSkinDeformer->GetClusterCount();
+		if(skinClusterCount <= 0)
+		{
+			continue;
+		}
+
+		fbxsdk::FbxSkin::EType skinningType = pSkinDeformer->GetSkinningType();
+		if(fbxsdk::FbxSkin::eLinear != skinningType &&
+			fbxsdk::FbxSkin::eRigid != skinningType)
+		{
+			continue;	
+		}
+
+		for(int skinClusterIndex = 0; skinClusterIndex < skinClusterCount; ++skinClusterIndex)
+		{
+			fbxsdk::FbxCluster* pCluster = pSkinDeformer->GetCluster(skinClusterIndex);
+			if(!pCluster)
+			{
+				continue;
+			}
+
+			int* pControlPointIndices = pCluster->GetControlPointIndices();
+			if(!pControlPointIndices)
+			{
+				continue;
+			}
+
+			double* pControlPointWeights = pCluster->GetControlPointWeights();
+			if(!pControlPointWeights)
+			{
+				continue;
+			}
+
+			// Usually it links a bone node
+			fbxsdk::FbxNode* pLinkNode = pCluster->GetLink();
+			const char* pLinkNodeName = pLinkNode->GetName();
+
+			for(int controlPointIndex = 0; controlPointIndex < pCluster->GetControlPointIndicesCount(); ++controlPointIndex)
+			{
+				int vertexIndex = pControlPointIndices[controlPointIndex];
+				if(vertexIndex >= mesh.GetVertexCount())
+				{
+					continue;
+				}
+
+				double vertexWeight = pControlPointWeights[controlPointIndex];
+				// vertexIndex -> { pLinkNodeName : vertexWeight }
+			}
 		}
 	}
 

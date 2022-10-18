@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 namespace cdtools
 {
 
@@ -24,7 +26,7 @@ private:
 	IProducer* m_pProducer = nullptr;
 	IConsumer* m_pConsumer = nullptr;
 
-	SceneDatabase* m_pSceneDatabase = nullptr;
+	std::unique_ptr<SceneDatabase> m_pSceneDatabase;
 };
 
 }

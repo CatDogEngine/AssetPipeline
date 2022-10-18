@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/ISerializable.h"
-#include "Math/VectorDerived.hpp"
+#include "Math/VectorTypes.h"
 #include "ObjectIDTypes.h"
 
 #include <string>
@@ -96,22 +96,28 @@ public:
 	static constexpr uint32_t MaxColorSetNumber = 8;
 
 private:
-	uint32_t				m_vertexCount = 0;
-	uint32_t				m_vertexUVSetCount = 0;
-	uint32_t				m_vertexColorSetCount = 0;
-	uint32_t				m_polygonCount = 0;
-	MeshID					m_id;
-	MaterialID				m_materialID;
+	// geometry attributes
+	uint32_t m_vertexCount = 0;
+	uint32_t m_vertexUVSetCount = 0;
+	uint32_t m_vertexColorSetCount = 0;
+	uint32_t m_polygonCount = 0;
 
-	std::string				m_name;
-	
-	// vertex data
-	std::vector<Point>		m_vertexPositions;
-	std::vector<Direction>	m_vertexNormals;		// Maybe we wants to use face normals? Or we can help to calculate it.
-	std::vector<Direction>	m_vertexTangents;		// Ditto.
-	std::vector<Direction>	m_vertexBiTangents;		// If not stored in model file, we can help to calculate it.
-	std::vector<UV>			m_vertexUVSets[MaxUVSetNumber];
-	std::vector<Color>		m_vertexColorSets[MaxColorSetNumber];
+	// identity attributes
+	MeshID m_id;
+	MaterialID m_materialID;
+	std::string m_name;
+
+	// vertex data for static mesh
+	std::vector<Point> m_vertexPositions;
+	std::vector<Direction> m_vertexNormals;
+	std::vector<Direction> m_vertexTangents;
+	std::vector<Direction> m_vertexBiTangents;
+	std::vector<UV> m_vertexUVSets[MaxUVSetNumber];
+	std::vector<Color> m_vertexColorSets[MaxColorSetNumber];
+
+	// vertex data for skin mesh
+	std::vector<std::string> m_jointName;
+
 
 	// polygon data
 	std::vector<Polygon>	m_polygons;

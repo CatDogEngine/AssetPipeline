@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Constants.h"
+#include "MathDefines.h"
 
 #include <algorithm>
 
@@ -16,7 +16,6 @@ template<typename T, typename Derived>
 class VectorBase
 {
 private:
-	// The CRTP trick.
 	Derived& CRTP() { return static_cast<Derived&>(*this); }
 	const Derived& CRTP() const { return static_cast<const Derived&>(*this); }
 
