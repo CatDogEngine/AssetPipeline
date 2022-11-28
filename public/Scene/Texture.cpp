@@ -3,11 +3,6 @@
 namespace cdtools
 {
 
-Texture::Texture(std::ifstream& fin)
-{
-	ImportBinary(fin);
-}
-
 Texture::Texture(TextureID textureID, std::string texturePath)
 {
 	Init(textureID, std::move(texturePath));

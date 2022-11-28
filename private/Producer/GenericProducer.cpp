@@ -342,6 +342,25 @@ void GenericProducer::AddMesh(SceneDatabase* pSceneDatabase, const aiMesh* pSour
 	pSceneDatabase->AddMesh(std::move(mesh));
 }
 
+void GenericProducer::AddSkeleton(SceneDatabase* pSceneDatabase, const aiSkeleton* pSourceSkeleton)
+{
+	assert(pSourceSkeleton->mNumBones > 0 && "Skeleton doesn't include any bones.");
+
+	pSourceSkeleton->mName;
+
+	for (uint32_t boneIndex = 0U; boneIndex < pSourceSkeleton->mNumBones; ++boneIndex)
+	{
+		const aiSkeletonBone* pBone = pSourceSkeleton->mBones[boneIndex];
+		const Mesh& influencedMesh = pSceneDatabase->GetMesh(pBone->mMeshId);
+		for(uint32_t weightIndex = 0U; weightIndex < pBone->mNumnWeights; ++weightIndex)
+		{
+			const aiVertexWeight* pVertexWeight = pBone->mWeights[weightIndex];
+			pVertexWeight->mVertexId;
+			pVertexWeight->mWeight;
+		}
+	}
+}
+
 void GenericProducer::Execute(SceneDatabase* pSceneDatabase)
 {
 	printf("ImportStaticMesh : %s\n", m_filePath.c_str());
@@ -357,9 +376,15 @@ void GenericProducer::Execute(SceneDatabase* pSceneDatabase)
 
 	// Process all meshes.
 	pSceneDatabase->SetMeshCount(pScene->mNumMeshes);
-	for (uint32_t meshIndex = 0; meshIndex < pScene->mNumMeshes; ++meshIndex)
+	for (uint32_t meshIndex = 0U; meshIndex < pScene->mNumMeshes; ++meshIndex)
 	{
 		AddMesh(pSceneDatabase, pScene->mMeshes[meshIndex]);
+	}
+	
+	pSceneDatabase->SetSkeletonCount(pScene->mNumSkeletons);
+	for (uint32_t skeletonIndex = 0U; skeletonIndex < pScene->mNumSkeletons; ++skeletonIndex)
+	{
+		AddSkeleton(pSceneDatabase, pScene->mSkeletons[skeletonIndex]);
 	}
 
 	// Post-process meshes.
@@ -387,7 +412,7 @@ void GenericProducer::Execute(SceneDatabase* pSceneDatabase)
 	uint32_t actualMaterialCount = optUsedMaterialIndexes.has_value() ? static_cast<uint32_t>(optUsedMaterialIndexes.value().size()) : pScene->mNumMaterials;
 	pSceneDatabase->SetMaterialCount(actualMaterialCount);
 	
-	for (uint32_t materialIndex = 0; materialIndex < pScene->mNumMaterials; ++materialIndex)
+	for (uint32_t materialIndex = 0U; materialIndex < pScene->mNumMaterials; ++materialIndex)
 	{
 		// Skip parsing unused materials.
 		if (optUsedMaterialIndexes.has_value() && !optUsedMaterialIndexes.value().contains(materialIndex))

@@ -41,7 +41,8 @@ void TerrainProducer::Execute(SceneDatabase* pSceneDatabase)
 	const uint32_t num_quads = m_numQuadsInX * m_numQuadsInZ;
 	const uint32_t num_vertices = num_quads * 4;	// 4 vertices per quad
 	const uint32_t num_polygons = num_quads * 2;	// 2 triangles per quad
-	Mesh terrain(MeshID(pSceneDatabase->GetNextMeshID()), "GeneratedTerrain", num_vertices, num_polygons);
+	static uint32_t next_mesh_id = 0U;
+	Mesh terrain(MeshID(next_mesh_id++), "GeneratedTerrain", num_vertices, num_polygons);
 
 	terrain.SetVertexColorSetCount(0);	// No colors
 	terrain.SetVertexUVSetCount(1);		// Only 1 set of UV

@@ -21,7 +21,7 @@ public:
 
 public:
 	Mesh() = delete;
-	explicit Mesh(std::ifstream& fin);
+	explicit Mesh(std::ifstream& fin) { ImportBinary(fin); }
 	explicit Mesh(MeshID meshID, std::string meshName, uint32_t vertexCount, uint32_t polygonCount);
 	Mesh(const Mesh&) = default;
 	Mesh& operator=(const Mesh&) = default;
@@ -115,6 +115,7 @@ private:
 
 	// vertex animation data
 	// vertex joint weights...
+	std::vector<float>		m_vertexWeights;
 
 	// polygon data
 	std::vector<Polygon>	m_polygons;

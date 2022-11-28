@@ -1,55 +1,7 @@
 #include "SceneDatabase.h"
 
-#include <cassert>
-
 namespace cdtools
 {
-
-///////////////////////////////////////////////////////////////////
-// Mesh
-///////////////////////////////////////////////////////////////////
-void SceneDatabase::SetMeshCount(uint32_t meshCount)
-{
-	m_meshes.reserve(meshCount);
-}
-
-uint32_t SceneDatabase::GetNextMeshID() {
-	// TODO make this thread-safe
-	uint32_t next_id = m_next_mesh_id;
-	++m_next_mesh_id;
-	return next_id;
-}
-
-void SceneDatabase::AddMesh(Mesh mesh)
-{
-	m_meshes.emplace_back(std::move(mesh));
-}
-
-///////////////////////////////////////////////////////////////////
-// Material
-///////////////////////////////////////////////////////////////////
-void SceneDatabase::SetMaterialCount(uint32_t materialCount)
-{
-	m_materials.reserve(materialCount);
-}
-
-void SceneDatabase::AddMaterial(Material material)
-{
-	m_materials.emplace_back(std::move(material));
-}
-
-///////////////////////////////////////////////////////////////////
-// Texture
-///////////////////////////////////////////////////////////////////
-void SceneDatabase::SetTextureCount(uint32_t textureCount)
-{
-	m_textures.reserve(textureCount);
-}
-
-void SceneDatabase::AddTexture(Texture texture)
-{
-	m_textures.emplace_back(std::move(texture));
-}
 
 ///////////////////////////////////////////////////////////////////
 // Import/Export
@@ -77,20 +29,17 @@ void SceneDatabase::ImportBinary(std::ifstream& fin)
 
 	for (uint32_t meshIndex = 0; meshIndex < meshCount; ++meshIndex)
 	{
-		Mesh mesh(fin);
-		AddMesh(std::move(mesh));
+		AddMesh(Mesh(fin));
 	}
 
 	for (uint32_t textureIndex = 0; textureIndex < textureCount; ++textureIndex)
 	{
-		Texture texture(fin);
-		AddTexture(std::move(texture));
+		AddTexture(Texture(fin));
 	}
 
 	for (uint32_t materialIndex = 0; materialIndex < materialCount; ++materialIndex)
 	{
-		Material material(fin);
-		AddMaterial(std::move(material));
+		AddMaterial(Material(fin));
 	}
 }
 
@@ -105,21 +54,18 @@ void SceneDatabase::ExportBinary(std::ofstream& fout) const
 	ExportData<uint32_t>(fout, GetMaterialCount());
 	ExportData<uint32_t>(fout, GetTextureCount());
 
-	for (uint32_t meshIndex = 0; meshIndex < GetMeshCount(); ++meshIndex)
+	for (const Mesh& mesh : GetMeshes())
 	{
-		const Mesh& mesh = GetMesh(meshIndex);
 		mesh.ExportBinary(fout);
 	}
 
-	for (uint32_t textureIndex = 0; textureIndex < GetTextureCount(); ++textureIndex)
+	for (const Texture& texture : GetTextures())
 	{
-		const Texture& texture = GetTexture(textureIndex);
 		texture.ExportBinary(fout);
 	}
 
-	for (uint32_t materialIndex = 0; materialIndex < GetMaterialCount(); ++materialIndex)
+	for (const Material& material : GetMaterials())
 	{
-		const Material& material = GetMaterial(materialIndex);
 		material.ExportBinary(fout);
 	}
 }

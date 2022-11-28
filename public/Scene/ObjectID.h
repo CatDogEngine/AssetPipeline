@@ -45,5 +45,6 @@ using MeshID = ObjectID<uint32_t, ObjectType::Mesh>;
 using MaterialID = ObjectID<uint32_t, ObjectType::Material>;
 using TextureID = ObjectID<uint32_t, ObjectType::Texture>;
 using LightID = ObjectID<uint32_t, ObjectType::Light>;
+using SkeletonID = ObjectID<uint32_t, ObjectType::Light>;
 
 }

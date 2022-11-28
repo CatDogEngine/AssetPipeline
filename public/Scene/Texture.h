@@ -12,7 +12,7 @@ class Texture final : public ISerializable
 {
 public:
 	Texture() = delete;
-	explicit Texture(std::ifstream& fin);
+	explicit Texture(std::ifstream& fin) { ImportBinary(fin); }
 	explicit Texture(TextureID textureID, std::string texturePath);
 	Texture(const Texture&) = default;
 	Texture& operator=(const Texture&) = default;

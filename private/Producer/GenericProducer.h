@@ -6,6 +6,7 @@
 
 struct aiMaterial;
 struct aiMesh;
+struct aiSkeleton;
 
 namespace cdtools
 {
@@ -57,6 +58,7 @@ private:
 	uint32_t GetImportFlags() const;
 	void AddMaterial(SceneDatabase* pSceneDatabase, const aiMaterial* pSourceMaterial);
 	void AddMesh(SceneDatabase* pSceneDatabase, const aiMesh* pSourceMesh);
+	void AddSkeleton(SceneDatabase* pSceneDatabase, const aiSkeleton* pSourceSkeleton);
 
 private:
 	// Service flags

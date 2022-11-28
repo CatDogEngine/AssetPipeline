@@ -5,11 +5,6 @@
 namespace cdtools
 {
 
-Material::Material(std::ifstream& fin)
-{
-	ImportBinary(fin);
-}
-
 Material::Material(MaterialID materialID, std::string materialName)
 {
 	Init(materialID, std::move(materialName));

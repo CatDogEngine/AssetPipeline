@@ -19,7 +19,7 @@ public:
 
 public:
 	Material() = delete;
-	explicit Material(std::ifstream& fin);
+	explicit Material(std::ifstream& fin) { ImportBinary(fin); }
 	explicit Material(MaterialID materialID, std::string materialName);
 	Material(const Material&) = default;
 	Material& operator=(const Material&) = default;
