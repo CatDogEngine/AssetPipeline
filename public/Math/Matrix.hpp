@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Math/Quaternion.hpp"
 #include "Math/Vector.hpp"
 
 #include <cstring> // std::memset
@@ -35,28 +36,28 @@ public:
 		}
 	}
 
-	// Transform
-	static MatrixType Transform(const TVector<T, 3>& position, const TMatrix<T, 3, 3>& rotation, const TVector<T, 3>& scale)
+	static MatrixType Transform(const TVector<T, 3>& position, const TQuaternion<float>& rotation, const TVector<T, 3>& scale)
 	{
 		static_assert(4 == Rows && 4 == Cols);
 
-		// rotation
-		TVector<T, 4> c0(rotation(0, 0), rotation(1, 0), rotation(2, 0), 0);
-		TVector<T, 4> c1(rotation(0, 1), rotation(1, 1), rotation(2, 1), 0);
-		TVector<T, 4> c2(rotation(0, 2), rotation(1, 2), rotation(2, 2), 0);
-		TVector<T, 4> c3(0, 0, 0, 1);
+		float qx = rotation.x();
+		float qy = rotation.y();
+		float qz = rotation.z();
+		float qs = rotation.GetScalar();
+		float qxx = qx * qx;
+		float qxy = qx * qy;
+		float qxz = qx * qz;
+		float qyy = qy * qy;
+		float qyz = qy * qz;
+		float qzz = qz * qz;
+		float qxs = qx * qs;
+		float qys = qy * qs;
+		float qzs = qz * qs;
 
-		// scale
-		c0 *= scale.x;
-		c1 *= scale.y;
-		c2 *= scale.z;
-
-		// translation
-		c3[0] = position.x;
-		c3[1] = position.y;
-		c3[2] = position.z;
-
-		return Matrix<T, 4, 4>(cd::MoveTemp(c0), cd::MoveTemp(c1), cd::MoveTemp(c2), cd::MoveTemp(c3));
+		return MatrixType(scale.x() * (1.0f - 2.0f * qyy - 2.0f * qzz), 2.0f * qxy + 2.0f * qzs, 2.0f * qxz - 2.0f * qys, 0.0f,
+						  2.0f * qxy - 2.0f * qzs, scale.y() * (1.0f - 2.0f * qxx - 2.0f * qzz), 2.f * qyz + 2.f * qxs, 0.0f,
+						  2.f * qxz + 2.f * qys, 2.f * qyz - 2.f * qxs, scale.z() * (1.f - 2.f * qxx - 2.f * qyy), 0.0f,
+						  position.x(), position.y(), position.z(), 1.0f);
 	}
 
 	template<Handedness Hand>
