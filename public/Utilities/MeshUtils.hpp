@@ -231,24 +231,11 @@ static std::optional<IndexBuffer> BuildIndexBufferesForPolygonGroup(const cd::Me
 		ibDataSize += dataSize;
 	};
 
-	bool mappingInstanceToID = mesh.GetVertexInstanceToIDCount() > 0U;
 	for (const auto& polygon : mesh.GetPolygonGroup(polygonGroupIndex))
 	{
 		for (auto vertexIndex : polygon)
 		{
-			// TODO : cd::PolygonGroup stores cd::VertexID or cd::VertexInstanceID.
-			// Based on the source mesh data if splits vertex positions and vertex attributes contributed to surface shading.
-			// For example, assimp doesn't split these concepts but fbx does.
-			// And in historical reason, polygon stores cd::VertexID but actually maybe cd::VertexInstanceID.
-			cd::VertexID vertexID;
-			if (mappingInstanceToID)
-			{
-				vertexID = mesh.GetVertexInstanceToID(vertexIndex.Data());
-			}
-			else
-			{
-				vertexID = vertexIndex;
-			}
+			cd::VertexID vertexID = vertexIndex;
 
 			if (useU16Index)
 			{
