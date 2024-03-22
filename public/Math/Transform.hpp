@@ -63,7 +63,7 @@ public:
 		TMatrix<T, 4, 4> rotation = m_rotation.ToMatrix4x4();
 		TMatrix<T, 4, 4> scale = cd::Matrix4x4::Identity();
 
-		// set translation to ratation matrix to reduce the number of multiplications
+		// set translation xyz to rotation matrix directly to save costs of matrix multiply
 		rotation.GetColumn(3)[0] = m_translation.x();
 		rotation.GetColumn(3)[1] = m_translation.y();
 		rotation.GetColumn(3)[2] = m_translation.z();
