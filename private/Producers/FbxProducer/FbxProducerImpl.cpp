@@ -194,7 +194,7 @@ void FindFbxSkeletalMeshRecursively(fbxsdk::FbxScene* pScene, fbxsdk::FbxNode* p
 	fbxsdk::FbxNode* pNodeToAdd = pNode;
 	fbxsdk::FbxVector4 noScale(1.0, 1.0, 1.0);
 
-	if (pNode->GetMesh() && pNode->GetMesh()->GetDeformerCount(FbxDeformer::eSkin) > 0)
+	if (pNode->GetMesh() && pNode->GetMesh()->GetDeformerCount(fbxsdk::FbxDeformer::eSkin) > 0)
 	{
 		pSkeletalMeshNode = pNode;
 	}
@@ -326,7 +326,7 @@ void FixSkeletonRecursively(fbxsdk::FbxManager* pManager, fbxsdk::FbxNode* pNode
 		// Replace with skeleton
 		auto* pSkeleton = fbxsdk::FbxSkeleton::Create(pManager, "");
 		pNode->SetNodeAttribute(pSkeleton);
-		pSkeleton->SetSkeletonType(FbxSkeleton::eLimbNode);
+		pSkeleton->SetSkeletonType(fbxsdk::FbxSkeleton::eLimbNode);
 	}
 }
 
@@ -1152,7 +1152,7 @@ cd::MeshID FbxProducerImpl::ImportMesh(const fbxsdk::FbxMesh* pFbxMesh, cd::Scen
 					uint32_t uvMapIndex = fbxsdk::FbxLayerElement::eByControlPoint == pLayerElementUVData->GetMappingMode() ? controlPointIndex : vertexInstanceID;
 					uint32_t uvValueIndex = fbxsdk::FbxLayerElement::eDirect == pLayerElementUVData->GetReferenceMode() ? uvMapIndex : pLayerElementUVData->GetIndexArray().GetAt(uvMapIndex);
 					fbxsdk::FbxVector2 uvValue = pLayerElementUVData->GetDirectArray().GetAt(uvValueIndex);
-					mesh.SetVertexUV(uvSetIndex, vertexInstanceID, cd::UV(uvValue[0], uvValue[1]));
+					mesh.SetVertexUV(uvSetIndex, vertexInstanceID, cd::UV(uvValue[0], -uvValue[1]));
 				}
 			}
 		}
@@ -1410,6 +1410,7 @@ void FbxProducerImpl::ImportSkeletonBones(fbxsdk::FbxScene* pScene, const std::v
 		}
 
 		cdBone.SetTransform(details::ConvertFbxTransform(localLinkT, localLinkQ, localLinkS));
+		cdBone.SetOffset(details::ConvertFbxMatrixToCDMatrix(globalTransformPerLinkBone[cdBoneID].Inverse()));
 	}
 
 	// Add to scene database.

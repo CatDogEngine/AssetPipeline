@@ -33,10 +33,11 @@ public:
 	{
 		uint32_t boneChildIDCount;
 
-		inputArchive >> GetID().Data() >> GetParentID().Data() >> GetName() >> boneChildIDCount;
+		inputArchive >> GetID().Data() >> GetParentID().Data() >> GetSkeletonID().Data() >> GetName() >> boneChildIDCount;
 		SetChildIDCount(boneChildIDCount);
 		inputArchive.ImportBuffer(GetChildIDs().data());
 		inputArchive >> GetOffset() >> GetTransform();
+		inputArchive >> GetLimbLength() >> GetLimbSize();
 
 		return *this;
 	}
@@ -44,9 +45,10 @@ public:
 	template<bool SwapBytesOrder>
 	const BoneImpl& operator>>(TOutputArchive<SwapBytesOrder>& outputArchive) const
 	{
-		outputArchive << GetID().Data() << GetParentID().Data() << GetName() << GetChildIDCount();
+		outputArchive << GetID().Data() << GetParentID().Data() << GetSkeletonID().Data() << GetName() << GetChildIDCount();
 		outputArchive.ExportBuffer(GetChildIDs().data(), GetChildIDs().size());
 		outputArchive << GetOffset() << GetTransform();
+		outputArchive << GetLimbLength() << GetLimbSize();
 
 		return *this;
 	}
