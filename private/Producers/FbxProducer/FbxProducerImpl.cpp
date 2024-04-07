@@ -1152,7 +1152,7 @@ cd::MeshID FbxProducerImpl::ImportMesh(const fbxsdk::FbxMesh* pFbxMesh, cd::Scen
 					uint32_t uvMapIndex = fbxsdk::FbxLayerElement::eByControlPoint == pLayerElementUVData->GetMappingMode() ? controlPointIndex : vertexInstanceID;
 					uint32_t uvValueIndex = fbxsdk::FbxLayerElement::eDirect == pLayerElementUVData->GetReferenceMode() ? uvMapIndex : pLayerElementUVData->GetIndexArray().GetAt(uvMapIndex);
 					fbxsdk::FbxVector2 uvValue = pLayerElementUVData->GetDirectArray().GetAt(uvValueIndex);
-					mesh.SetVertexUV(uvSetIndex, vertexInstanceID, cd::UV(uvValue[0], -uvValue[1]));
+					mesh.SetVertexUV(uvSetIndex, vertexInstanceID, cd::UV(uvValue[0], 1.0f - uvValue[1]));
 				}
 			}
 		}
