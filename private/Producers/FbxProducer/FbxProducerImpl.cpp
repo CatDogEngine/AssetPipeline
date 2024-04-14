@@ -478,6 +478,8 @@ FbxProducerImpl::FbxProducerImpl(std::string filePath)
 	m_options.Enable(FbxProducerOptions::ImportStaticMesh);
 	m_options.Enable(FbxProducerOptions::ImportMaterial);
 	m_options.Enable(FbxProducerOptions::ImportTexture);
+	m_options.Enable(FbxProducerOptions::ImportSkeletalMesh);
+	m_options.Enable(FbxProducerOptions::ImportSkeleton);
 }
 
 FbxProducerImpl::~FbxProducerImpl()

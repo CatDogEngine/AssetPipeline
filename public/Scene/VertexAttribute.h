@@ -10,7 +10,7 @@ namespace cd
 
 static constexpr uint32_t MaxUVSetCount = 4U;
 static constexpr uint32_t MaxColorSetCount = 4U;
-static constexpr uint32_t MaxBoneInfluenceCount = 8U;
+static constexpr uint32_t MaxBoneInfluenceCount = 4U;
 using VertexWeight = float;
 
 enum class VertexAttributeType : uint8_t

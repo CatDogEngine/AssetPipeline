@@ -26,10 +26,10 @@ static std::optional<VertexBuffer> BuildVertexBufferForStaticMesh(const cd::Mesh
 	uint32_t vbDataSize = 0U;
 	auto vbDataPtr = vertexBuffer.data();
 	auto FillVertexBuffer = [&vbDataPtr, &vbDataSize](const void* pData, uint32_t dataSize)
-	{
-		std::memcpy(&vbDataPtr[vbDataSize], pData, dataSize);
-		vbDataSize += dataSize;
-	};
+		{
+			std::memcpy(&vbDataPtr[vbDataSize], pData, dataSize);
+			vbDataSize += dataSize;
+		};
 
 	for (uint32_t vertexInstance = 0; vertexInstance < vertexInstanceCount; ++vertexInstance)
 	{
@@ -92,16 +92,14 @@ static std::optional<VertexBuffer> BuildVertexBufferForSkeletalMesh(const cd::Me
 	}
 
 	// TODO : refine hardcoded 4 bones.
-	uint32_t vertexMaxInfluenceCount = 4U;
-	assert(skin.GetMaxVertexInfluenceCount() <= vertexMaxInfluenceCount);
-	std::vector<uint16_t> vertexBoneIndexes;
-	std::vector<cd::VertexWeight> vertexBoneWeights;
-	vertexBoneIndexes.resize(vertexMaxInfluenceCount);
-	vertexBoneWeights.resize(vertexMaxInfluenceCount);
+	constexpr uint32_t VertexMaxInfluenceCount = 4U;
+	assert(skin.GetMaxVertexInfluenceCount() <= VertexMaxInfluenceCount);
 
 	// TODO : 127 is hardcoded in shader logic which means invalid bone index.
 	uint16_t defaultVertexBoneIndex = 127;
 	float defaultVertexBoneWeight = 0.0f;
+	std::vector<uint16_t> vertexBoneIndexes;
+	std::vector<cd::VertexWeight> vertexBoneWeights;
 
 	// Building a mapping table from skeleton bone name to bone index in the skeleton bone tree.
 	std::map<std::string, uint16_t> skeletonBoneNameToIndex;
@@ -128,10 +126,10 @@ static std::optional<VertexBuffer> BuildVertexBufferForSkeletalMesh(const cd::Me
 	uint32_t vbDataSize = 0U;
 	auto vbDataPtr = vertexBuffer.data();
 	auto FillVertexBuffer = [&vbDataPtr, &vbDataSize](const void* pData, uint32_t dataSize)
-	{
-		std::memcpy(&vbDataPtr[vbDataSize], pData, dataSize);
-		vbDataSize += dataSize;
-	};
+		{
+			std::memcpy(&vbDataPtr[vbDataSize], pData, dataSize);
+			vbDataSize += dataSize;
+		};
 
 	for (uint32_t vertexInstance = 0; vertexInstance < vertexInstanceCount; ++vertexInstance)
 	{
@@ -177,24 +175,22 @@ static std::optional<VertexBuffer> BuildVertexBufferForSkeletalMesh(const cd::Me
 			FillVertexBuffer(mesh.GetVertexColor(0)[vertexInstance].begin(), dataSize);
 		}
 
+		vertexBoneIndexes.resize(VertexMaxInfluenceCount, defaultVertexBoneIndex);
+		vertexBoneWeights.resize(VertexMaxInfluenceCount, defaultVertexBoneWeight);
+
 		auto& vertexBoneNameArray = skin.GetVertexBoneNameArray(vertexID);
 		auto& vertexBoneWeightArray = skin.GetVertexBoneWeightArray(vertexID);
-		for (uint32_t vertexInfluenceIndex = 0U; vertexInfluenceIndex < vertexMaxInfluenceCount; ++vertexInfluenceIndex)
+		for (uint32_t vertexInfluenceIndex = 0U; vertexInfluenceIndex < VertexMaxInfluenceCount; ++vertexInfluenceIndex)
 		{
 			if (vertexInfluenceIndex < vertexBoneNameArray.size())
 			{
 				const std::string& influenceBoneName = vertexBoneNameArray[vertexInfluenceIndex];
 				auto itBoneIndex = skeletonBoneNameToIndex.find(influenceBoneName);
 				// Skeleton and Skin mismatch.
-				assert(itBoneIndex == skeletonBoneNameToIndex.end());
+				assert(itBoneIndex != skeletonBoneNameToIndex.end());
 
-				vertexBoneIndexes.push_back(itBoneIndex->second);
-				vertexBoneWeights.push_back(vertexBoneWeightArray[vertexInfluenceIndex]);
-			}
-			else
-			{
-				vertexBoneIndexes.push_back(defaultVertexBoneIndex);
-				vertexBoneWeights.push_back(defaultVertexBoneWeight);
+				vertexBoneIndexes[vertexInfluenceIndex] = itBoneIndex->second;
+				vertexBoneWeights[vertexInfluenceIndex] = vertexBoneWeightArray[vertexInfluenceIndex];
 			}
 		}
 
@@ -226,10 +222,10 @@ static std::optional<IndexBuffer> BuildIndexBufferesForPolygonGroup(const cd::Me
 	uint32_t ibDataSize = 0U;
 	auto ibDataPtr = indexBuffer.data();
 	auto FillIndexBuffer = [&ibDataPtr, &ibDataSize](const void* pData, uint32_t dataSize)
-	{
-		std::memcpy(&ibDataPtr[ibDataSize], pData, dataSize);
-		ibDataSize += dataSize;
-	};
+		{
+			std::memcpy(&ibDataPtr[ibDataSize], pData, dataSize);
+			ibDataSize += dataSize;
+		};
 
 	for (const auto& polygon : mesh.GetPolygonGroup(polygonGroupIndex))
 	{
