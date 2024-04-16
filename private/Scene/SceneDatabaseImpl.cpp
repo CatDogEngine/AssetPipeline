@@ -626,6 +626,12 @@ void SceneDatabaseImpl::Merge(cd::SceneDatabaseImpl&& sceneDatabaseImpl)
 		AddMesh(cd::MoveTemp(mesh));
 	}
 
+	for (auto& skinMesh : sceneDatabaseImpl.GetSkins())
+	{
+		skinMesh.SetID(GetSkinCount());
+		AddSkin(cd::MoveTemp(skinMesh));
+	}
+
 	for (auto& blendshape : sceneDatabaseImpl.GetBlendShapes())
 	{
 		blendshape.SetID(GetBlendShapeCount());
