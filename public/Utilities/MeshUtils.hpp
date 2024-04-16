@@ -26,10 +26,10 @@ static std::optional<VertexBuffer> BuildVertexBufferForStaticMesh(const cd::Mesh
 	uint32_t vbDataSize = 0U;
 	auto vbDataPtr = vertexBuffer.data();
 	auto FillVertexBuffer = [&vbDataPtr, &vbDataSize](const void* pData, uint32_t dataSize)
-		{
-			std::memcpy(&vbDataPtr[vbDataSize], pData, dataSize);
-			vbDataSize += dataSize;
-		};
+	{
+		std::memcpy(&vbDataPtr[vbDataSize], pData, dataSize);
+		vbDataSize += dataSize;
+	};
 
 	for (uint32_t vertexInstance = 0; vertexInstance < vertexInstanceCount; ++vertexInstance)
 	{
@@ -126,10 +126,10 @@ static std::optional<VertexBuffer> BuildVertexBufferForSkeletalMesh(const cd::Me
 	uint32_t vbDataSize = 0U;
 	auto vbDataPtr = vertexBuffer.data();
 	auto FillVertexBuffer = [&vbDataPtr, &vbDataSize](const void* pData, uint32_t dataSize)
-		{
-			std::memcpy(&vbDataPtr[vbDataSize], pData, dataSize);
-			vbDataSize += dataSize;
-		};
+	{
+		std::memcpy(&vbDataPtr[vbDataSize], pData, dataSize);
+		vbDataSize += dataSize;
+	};
 
 	for (uint32_t vertexInstance = 0; vertexInstance < vertexInstanceCount; ++vertexInstance)
 	{
@@ -222,10 +222,10 @@ static std::optional<IndexBuffer> BuildIndexBufferesForPolygonGroup(const cd::Me
 	uint32_t ibDataSize = 0U;
 	auto ibDataPtr = indexBuffer.data();
 	auto FillIndexBuffer = [&ibDataPtr, &ibDataSize](const void* pData, uint32_t dataSize)
-		{
-			std::memcpy(&ibDataPtr[ibDataSize], pData, dataSize);
-			ibDataSize += dataSize;
-		};
+	{
+		std::memcpy(&ibDataPtr[ibDataSize], pData, dataSize);
+		ibDataSize += dataSize;
+	};
 
 	for (const auto& polygon : mesh.GetPolygonGroup(polygonGroupIndex))
 	{
