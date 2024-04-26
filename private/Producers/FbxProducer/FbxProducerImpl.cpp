@@ -1401,13 +1401,11 @@ void FbxProducerImpl::ImportSkeletonBones(fbxsdk::FbxScene* pScene, const std::v
 		if (boneIndex != rootBoneIndex)
 		{
 			boneTransform = globalTransformPerLinkBone[cdBoneParentID].Inverse() * globalTransformPerLinkBone[cdBoneID];
-			
 		}
 		else
 		{
 			// RootBone is already in global coordinate system.
 			boneTransform = globalTransformPerLinkBone[cdBoneID];
-		
 		}
 
 		cdBone.SetTransform(details::ConvertFbxTransform(boneTransform));
