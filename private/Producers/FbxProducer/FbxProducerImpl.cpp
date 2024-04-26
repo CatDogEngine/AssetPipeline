@@ -59,13 +59,13 @@ cd::Vec3f ConvertFbxScale(const fbxsdk::FbxVector4& scale)
 	return cd::Vec3f(static_cast<float>(scale[0]), static_cast<float>(scale[1]), static_cast<float>(scale[2]));
 }
 
-cd::Transform ConvertFbxTransform(fbxsdk::FbxAMatrix Matrix)
+cd::Transform ConvertFbxTransform(const fbxsdk::FbxAMatrix& Matrix)
 {
 	cd::Matrix4x4 transformMatrix = ConvertFbxMatrixToCDMatrix(Matrix);
 
 	return cd::Transform(
 		cd::Vec3f(transformMatrix.GetTranslation()),
-		cd::Quaternion(cd::Quaternion::FromMatrix(transformMatrix.GetRotation())),
+		cd::Quaternion::FromMatrix(transformMatrix.GetRotation()),
 		cd::Vec3f(transformMatrix.GetScale()));
 }
 
@@ -1397,20 +1397,20 @@ void FbxProducerImpl::ImportSkeletonBones(fbxsdk::FbxScene* pScene, const std::v
 		}
 
 		// Get local transform materix for link bone.
-		fbxsdk::FbxAMatrix transform;
+		fbxsdk::FbxAMatrix boneTransform;
 		if (boneIndex != rootBoneIndex)
 		{
-			fbxsdk::FbxAMatrix transform = globalTransformPerLinkBone[cdBoneParentID].Inverse() * globalTransformPerLinkBone[cdBoneID];
+			boneTransform = globalTransformPerLinkBone[cdBoneParentID].Inverse() * globalTransformPerLinkBone[cdBoneID];
 			
 		}
 		else
 		{
 			// RootBone is already in global coordinate system.
-			const auto& transform = globalTransformPerLinkBone[cdBoneID];
+			boneTransform = globalTransformPerLinkBone[cdBoneID];
 		
 		}
 
-		cdBone.SetTransform(details::ConvertFbxTransform(transform));
+		cdBone.SetTransform(details::ConvertFbxTransform(boneTransform));
 		cdBone.SetOffset(details::ConvertFbxMatrixToCDMatrix(globalTransformPerLinkBone[cdBoneID].Inverse()));
 	}
 
