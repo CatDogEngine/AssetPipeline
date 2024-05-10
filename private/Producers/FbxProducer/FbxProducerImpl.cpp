@@ -1492,11 +1492,11 @@ cd::SkinID FbxProducerImpl::ImportSkin(const fbxsdk::FbxSkin* pSkin, const cd::M
 			uint32_t vertexIndex = pControlPointIndices[controlPointIndex];
 			assert(vertexIndex < meshVertexCount);
 			
-				auto boneWeight = static_cast<float>(pBoneWeights[controlPointIndex]); 
-				skin.GetVertexBoneNameArray(vertexIndex).push_back(pBoneName);
-				skin.GetVertexBoneWeightArray(vertexIndex).push_back(boneWeight);
-			}
+			auto boneWeight = static_cast<float>(pBoneWeights[controlPointIndex]); 
+			skin.GetVertexBoneNameArray(vertexIndex).push_back(pBoneName);
+			skin.GetVertexBoneWeightArray(vertexIndex).push_back(boneWeight);
 		}
+	}
 
 	uint32_t maxVertexInfluenceCount = 0U;
 	for (uint32_t vertexIndex = 0U; vertexIndex < meshVertexCount; ++vertexIndex)
@@ -1514,6 +1514,7 @@ cd::SkinID FbxProducerImpl::ImportSkin(const fbxsdk::FbxSkin* pSkin, const cd::M
 		pSceneDatabase->AddSkin(cd::MoveTemp(skin));
 		return skinID;
 	}
+
 	return cd::SkinID::InvalidID;
 }
 
