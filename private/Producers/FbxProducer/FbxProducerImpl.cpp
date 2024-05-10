@@ -1492,7 +1492,7 @@ cd::SkinID FbxProducerImpl::ImportSkin(const fbxsdk::FbxSkin* pSkin, const cd::M
 			uint32_t vertexIndex = pControlPointIndices[controlPointIndex];
 			assert(vertexIndex < meshVertexCount);
 			
-			auto boneWeight = static_cast<float>(pBoneWeights[controlPointIndex]); 
+			auto boneWeight = static_cast<float>(pBoneWeights[controlPointIndex]);
 			skin.GetVertexBoneNameArray(vertexIndex).push_back(pBoneName);
 			skin.GetVertexBoneWeightArray(vertexIndex).push_back(boneWeight);
 		}
