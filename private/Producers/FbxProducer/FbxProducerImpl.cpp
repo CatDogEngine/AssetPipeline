@@ -465,8 +465,6 @@ FbxProducerImpl::FbxProducerImpl(std::string filePath)
 	: m_filePath(cd::MoveTemp(filePath))
 {
 	// Default import options.
-	m_options.Enable(FbxProducerOptions::ImportMaterial);
-	m_options.Enable(FbxProducerOptions::ImportTexture);
 	m_options.Enable(FbxProducerOptions::Triangulate);
 
 	// Init fbxsdk settings.
@@ -485,6 +483,7 @@ FbxProducerImpl::FbxProducerImpl(std::string filePath)
 	m_options.Enable(FbxProducerOptions::ImportTexture);
 	m_options.Enable(FbxProducerOptions::ImportSkeletalMesh);
 	m_options.Enable(FbxProducerOptions::ImportSkeleton);
+	m_options.Enable(FbxProducerOptions::ImportAnimation);
 }
 
 FbxProducerImpl::~FbxProducerImpl()
@@ -610,7 +609,7 @@ void FbxProducerImpl::Execute(cd::SceneDatabase* pSceneDatabase)
 		}
 	}
 
-	if (1)
+	if (IsOptionEnabled(FbxProducerOptions::ImportSkeleton))
 	{
 		for (const auto& skeletalMeshArray : sceneInfo.skeletalMeshArrays)
 		{
@@ -618,7 +617,7 @@ void FbxProducerImpl::Execute(cd::SceneDatabase* pSceneDatabase)
 		}
 	}
 
-	if (1)
+	if (IsOptionEnabled(FbxProducerOptions::ImportSkeletalMesh))
 	{
 		for (const auto& skeletalMeshArray : sceneInfo.skeletalMeshArrays)
 		{
@@ -629,7 +628,7 @@ void FbxProducerImpl::Execute(cd::SceneDatabase* pSceneDatabase)
 		}
 	}
 
-	if (1)
+	if (IsOptionEnabled(FbxProducerOptions::ImportAnimation))
 	{
 		if (auto* pAnimStack = pSDKScene->GetSrcObject<fbxsdk::FbxAnimStack>(0))
 		{
@@ -1453,6 +1452,7 @@ cd::SkinID FbxProducerImpl::ImportSkin(const fbxsdk::FbxSkin* pSkin, const cd::M
 	skin.SetName(pSkin->GetName());
 	skin.SetVertexBoneNameArrayCount(meshVertexCount);
 	skin.SetVertexBoneWeightArrayCount(meshVertexCount);
+
 	auto& influenceBoneNames = skin.GetInfluenceBoneNames();
 	for (int32_t skinClusterIndex = 0; skinClusterIndex < pSkin->GetClusterCount(); ++skinClusterIndex)
 	{
@@ -1668,7 +1668,6 @@ void FbxProducerImpl::ImportAnimation(fbxsdk::FbxScene* scene, cd::SceneDatabase
 		worldInverseMatrices.resize(pSceneDatabase->GetBoneCount());
 		for (uint32_t boneIndex = 0U; boneIndex < pSceneDatabase->GetBoneCount(); ++boneIndex)
 		{
-
 			const std::vector<cd::Matrix4x4>& boneWorldMatrices = worldMatrices[boneIndex];
 			std::vector<cd::Matrix4x4>& boneWorldInvMatrices = worldInverseMatrices[boneIndex];
 			boneWorldInvMatrices.resize((trackCount));
