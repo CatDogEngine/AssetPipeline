@@ -499,7 +499,6 @@ FbxProducerImpl::~FbxProducerImpl()
 void FbxProducerImpl::Execute(cd::SceneDatabase* pSceneDatabase)
 {
 	pSceneDatabase->SetName(m_filePath.c_str());
-
 	fbxsdk::FbxIOSettings* pIOSettings = m_pSDKManager->GetIOSettings();
 
 	// Query SDK version and initialize Importer and IOSettings for opening file.
@@ -611,7 +610,7 @@ void FbxProducerImpl::Execute(cd::SceneDatabase* pSceneDatabase)
 		}
 	}
 
-	if (IsOptionEnabled(FbxProducerOptions::ImportSkeleton))
+	if (1)
 	{
 		for (const auto& skeletalMeshArray : sceneInfo.skeletalMeshArrays)
 		{
@@ -619,7 +618,7 @@ void FbxProducerImpl::Execute(cd::SceneDatabase* pSceneDatabase)
 		}
 	}
 
-	if (IsOptionEnabled(FbxProducerOptions::ImportSkeletalMesh))
+	if (1)
 	{
 		for (const auto& skeletalMeshArray : sceneInfo.skeletalMeshArrays)
 		{
@@ -630,7 +629,7 @@ void FbxProducerImpl::Execute(cd::SceneDatabase* pSceneDatabase)
 		}
 	}
 
-	if (IsOptionEnabled(FbxProducerOptions::ImportAnimation))
+	if (1)
 	{
 		if (auto* pAnimStack = pSDKScene->GetSrcObject<fbxsdk::FbxAnimStack>(0))
 		{
@@ -1092,7 +1091,6 @@ cd::MeshID FbxProducerImpl::ImportMesh(const fbxsdk::FbxMesh* pFbxMesh, cd::Scen
 			uint32_t controlPointIndex = pFbxMesh->GetPolygonVertex(polygonIndex, polygonVertexIndex);
 			uint32_t vertexInstanceID = polygonVertexBeginIndex + polygonVertexIndex;
 			mesh.SetVertexInstanceToID(vertexInstanceID, controlPointIndex);
-
 			polygon.push_back(vertexInstanceID);
 		}
 
@@ -1424,6 +1422,8 @@ cd::MeshID FbxProducerImpl::ImportSkeletalMesh(const fbxsdk::FbxMesh* pFbxMesh, 
 {
 	cd::MeshID meshID = ImportMesh(pFbxMesh, pSceneDatabase);
 	auto& mesh = pSceneDatabase->GetMesh(meshID.Data());
+	mesh.GetVertexFormat().AddVertexAttributeLayout(cd::VertexAttributeType::BoneIndex, cd::AttributeValueType::Int16, cd::MaxBoneInfluenceCount);
+	mesh.GetVertexFormat().AddVertexAttributeLayout(cd::VertexAttributeType::BoneWeight, cd::AttributeValueType::Float, cd::MaxBoneInfluenceCount);
 	int32_t skinDeformerCount = pFbxMesh->GetDeformerCount(fbxsdk::FbxDeformer::eSkin);
 	for (int32_t skinIndex = 0; skinIndex < skinDeformerCount; ++skinIndex)
 	{
@@ -1453,7 +1453,6 @@ cd::SkinID FbxProducerImpl::ImportSkin(const fbxsdk::FbxSkin* pSkin, const cd::M
 	skin.SetName(pSkin->GetName());
 	skin.SetVertexBoneNameArrayCount(meshVertexCount);
 	skin.SetVertexBoneWeightArrayCount(meshVertexCount);
-
 	auto& influenceBoneNames = skin.GetInfluenceBoneNames();
 	for (int32_t skinClusterIndex = 0; skinClusterIndex < pSkin->GetClusterCount(); ++skinClusterIndex)
 	{
@@ -1493,11 +1492,11 @@ cd::SkinID FbxProducerImpl::ImportSkin(const fbxsdk::FbxSkin* pSkin, const cd::M
 			uint32_t vertexIndex = pControlPointIndices[controlPointIndex];
 			assert(vertexIndex < meshVertexCount);
 			
-			auto boneWeight = static_cast<float>(pBoneWeights[controlPointIndex]);
-			skin.GetVertexBoneNameArray(vertexIndex).push_back(pBoneName);
-			skin.GetVertexBoneWeightArray(vertexIndex).push_back(boneWeight);
+				auto boneWeight = static_cast<float>(pBoneWeights[controlPointIndex]); 
+				skin.GetVertexBoneNameArray(vertexIndex).push_back(pBoneName);
+				skin.GetVertexBoneWeightArray(vertexIndex).push_back(boneWeight);
+			}
 		}
-	}
 
 	uint32_t maxVertexInfluenceCount = 0U;
 	for (uint32_t vertexIndex = 0U; vertexIndex < meshVertexCount; ++vertexIndex)
@@ -1513,8 +1512,8 @@ cd::SkinID FbxProducerImpl::ImportSkin(const fbxsdk::FbxSkin* pSkin, const cd::M
 	if (skin.GetInfluenceBoneNameCount() > 0U)
 	{
 		pSceneDatabase->AddSkin(cd::MoveTemp(skin));
+		return skinID;
 	}
-	
 	return cd::SkinID::InvalidID;
 }
 
@@ -1669,7 +1668,7 @@ void FbxProducerImpl::ImportAnimation(fbxsdk::FbxScene* scene, cd::SceneDatabase
 		worldInverseMatrices.resize(pSceneDatabase->GetBoneCount());
 		for (uint32_t boneIndex = 0U; boneIndex < pSceneDatabase->GetBoneCount(); ++boneIndex)
 		{
-		
+
 			const std::vector<cd::Matrix4x4>& boneWorldMatrices = worldMatrices[boneIndex];
 			std::vector<cd::Matrix4x4>& boneWorldInvMatrices = worldInverseMatrices[boneIndex];
 			boneWorldInvMatrices.resize((trackCount));
