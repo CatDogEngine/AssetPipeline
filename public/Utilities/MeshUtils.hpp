@@ -189,13 +189,13 @@ static std::optional<VertexBuffer> BuildVertexBufferForSkeletalMesh(const cd::Me
 				// Skeleton and Skin mismatch.
 				assert(itBoneIndex != skeletonBoneNameToIndex.end());
 
-				vertexBoneIndexes[vertexInfluenceIndex] = (itBoneIndex->second);
-				vertexBoneWeights[vertexInfluenceIndex] = (vertexBoneWeightArray[vertexInfluenceIndex]);
+				vertexBoneIndexes[vertexInfluenceIndex] = itBoneIndex->second;
+				vertexBoneWeights[vertexInfluenceIndex] = vertexBoneWeightArray[vertexInfluenceIndex];
 			}
 			else
 			{
-				vertexBoneIndexes[vertexInfluenceIndex] = (defaultVertexBoneIndex);
-				vertexBoneWeights[vertexInfluenceIndex] = (defaultVertexBoneWeight);
+				vertexBoneIndexes[vertexInfluenceIndex] = defaultVertexBoneIndex;
+				vertexBoneWeights[vertexInfluenceIndex] = defaultVertexBoneWeight;
 			}
 		}
 
