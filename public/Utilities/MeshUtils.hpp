@@ -192,6 +192,11 @@ static std::optional<VertexBuffer> BuildVertexBufferForSkeletalMesh(const cd::Me
 				vertexBoneIndexes[vertexInfluenceIndex] = itBoneIndex->second;
 				vertexBoneWeights[vertexInfluenceIndex] = vertexBoneWeightArray[vertexInfluenceIndex];
 			}
+			else
+			{
+				vertexBoneIndexes[vertexInfluenceIndex] = defaultVertexBoneIndex;
+				vertexBoneWeights[vertexInfluenceIndex] = defaultVertexBoneWeight;
+			}
 		}
 
 		FillVertexBuffer(vertexBoneIndexes.data(), static_cast<uint32_t>(vertexBoneIndexes.size() * sizeof(uint16_t)));
