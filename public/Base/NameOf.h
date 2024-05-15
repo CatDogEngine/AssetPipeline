@@ -8,12 +8,12 @@ namespace nameof
 {
 
 template <typename E>
-[[nodiscard]] constexpr auto enum_count() noexcept
+[[nodiscard]] inline constexpr auto enum_count() noexcept
 {
-	return nameof::detail::count_v<std::decay_t<E>>;
+	return detail::count_v<std::decay_t<E>>;
 }
 
-template<class E>
+template<typename E>
 [[nodiscard]] inline std::optional<E> enumof_name(const char* name) noexcept
 {
 	using D = std::decay_t<E>;
